@@ -1,0 +1,55 @@
+#include<glut.h>
+void init() {
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(640, 480);
+	glutInitWindowPosition(500, 200);
+	glutCreateWindow("Lab1");
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glMatrixMode(GL_PROJECTION);
+	glColor3f(1.0, 1.0, 1.0);
+	glPointSize(10.0f);
+	gluOrtho2D(-780, 780, -420, 420);
+
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// Point
+	glPointSize(5.0); // the point size to 10 pixels
+
+	glBegin(GL_POINTS); // drawing points
+	glColor3f(0.0, 1.0, 0.0); // the color to red (R, G, B)
+	glVertex2f(-150.0f,10.0f); //s the coordinates of the point (in this case, at the origin)
+	glEnd();
+
+	// Rectangle
+	glBegin(GL_POINTS);
+	glVertex2f(250.0f, 60.0f);
+	glEnd();
+
+	// Line
+	glBegin(GL_LINES);
+	glVertex2f(10.0f, 10.0f);  // Start point
+	glVertex2f(50.0f, 50.0f);  // End point
+	glEnd();
+
+	// Triangle
+	glBegin(GL_TRIANGLES);
+	glVertex2f(100.0f, 100.0f);  // Vertex 1
+	glVertex2f(300.0f, 100.0f);  // Vertex 2
+	glVertex2f(200.0f, 300.0f);  // Vertex 3
+	glEnd();
+
+	glFlush();  // Render now
+
+}
+
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	init();
+	glutDisplayFunc(display);
+	glutMainLoop();
+	return 0;
+
+}
