@@ -1,0 +1,77 @@
+#include<windows.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<glut.h>
+
+GLint x0, y0, xEnd, yEnd,steps, k,dx,dy;
+GLfloat xIncrement, yIncrement, x, y;
+
+inline GLint round(const GLfloat a)
+{
+	return GLint(a + 0.5);
+}
+
+void init() {
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(640, 480);
+	glutInitWindowPosition(500, 200);
+	glutCreateWindow("DDA");
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glMatrixMode(GL_PROJECTION);
+	glColor3f(1.0, 1.0, 1.0);
+	glPointSize(10.0f);
+	gluOrtho2D(-780, 780, -420, 420);
+
+}
+
+
+void readInput()
+{
+
+	printf("Enter x0, y0, xEnd, yEnd(resp): ");
+	scanf_s("%i %i %i %i", &x0, &y0, &xEnd, &yEnd);
+	printf("%i %i %i %i", x0, y0, xEnd, yEnd);
+
+}
+
+void setPixel(GLint xcoordinate, GLint ycoordinate)
+{
+	glPointSize(1.0);
+	glBegin(GL_POINTS);
+	glColor3f(0.0, 1.0, 0.0);
+	glVertex2f(xcoordinate, ycoordinate);
+	glEnd();
+}
+
+void Bresenhamlinealgorithm()
+{
+	dx = abs(xEnd - x0);
+	dy = abs(yEnd - y0);
+	xIncrement, yIncrement, x = x0, y = y0;
+
+	unsigned int m = (yEnd - y0) / (xEnd - x0);
+	printf("check1");
+
+	for (unsigned int i = x0; i < xEnd; i++)
+	{
+		yIncrement = round(m * i);
+		setPixel(round(i), round(yIncrement));
+	}
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT);
+	Bresenhamlinealgorithm();
+	glFlush();  // Render now
+
+}
+
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	init();
+	readInput();
+	glutDisplayFunc(display);
+	glutMainLoop();
+	return 0;
+
+}
