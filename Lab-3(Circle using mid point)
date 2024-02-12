@@ -1,0 +1,67 @@
+#include <GL/glut.h>
+#include <cmath>
+
+int radius = 50;
+
+void drawPixel(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+}
+
+void drawCircleMidpoint(int r) {
+    int x = 0, y = r;
+    int p = 1 - r; // Initial decision parameter
+
+    // The initial point in each octant
+    drawPixel(x, y);
+
+    // Plot the points of each octant while transforming
+    // coordinates using the symmetry properties of the circle
+    while (x < y) {
+        x++;
+
+        if (p < 0)
+            p += 2 * x + 1;
+        else {
+            y--;
+            p += 2 * (x - y) + 1;
+        }
+        drawPixel(x, y);
+        drawPixel(-x, y);
+        drawPixel(x, -y);
+        drawPixel(-x, -y);
+
+        drawPixel(y, x);
+        drawPixel(-y, x);
+        drawPixel(y, -x);
+        drawPixel(-y, -x);
+    }
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 1.0, 1.0);
+    drawCircleMidpoint(radius);
+
+    glFlush();
+}
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 0.0); // Setting background color to black
+    gluOrtho2D(-100, 100, -100, 100);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(400, 400);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Midpoint Circle Algorithm");
+
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+
+    return 0;
+}
