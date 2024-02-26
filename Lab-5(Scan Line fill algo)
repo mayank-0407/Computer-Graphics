@@ -1,0 +1,79 @@
+#include <glut.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+struct Point {
+    int x, y;
+};
+
+std::vector<Point> vertices;
+
+void drawPolygon() {
+    glColor3f(1.0, 1.0, 1.0); // Set color to white
+
+    glBegin(GL_LINE_LOOP);
+    for (const Point& vertex : vertices) {
+        glVertex2i(vertex.x, vertex.y);
+    }
+    glEnd();
+}
+
+void drawPixel(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+}
+
+void scanLineFill() {
+    glColor3f(0.0, 0.0, 1.0); // Set color to blue for filling
+
+    int minY = std::min_element(vertices.begin(), vertices.end(), [](const Point& a, const Point& b) {
+        return a.y < b.y;
+        })->y;
+
+    int maxY = std::max_element(vertices.begin(), vertices.end(), [](const Point& a, const Point& b) {
+        return a.y < b.y;
+        })->y;
+
+    for (int y = minY; y <= maxY; ++y) {
+        for (size_t i = 0; i < vertices.size(); ++i) {
+            size_t nextIndex = (i + 1) % vertices.size();
+            int x1 = vertices[i].x, y1 = vertices[i].y;
+            int x2 = vertices[nextIndex].x, y2 = vertices[nextIndex].y;
+
+            if ((y1 <= y && y < y2) || (y2 <= y && y < y1)) {
+                int xIntersect = static_cast<int>(x1 + (static_cast<double>(y - y1) / (y2 - y1)) * (x2 - x1));
+                drawPixel(xIntersect, y);
+            }
+        }
+    }
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawPolygon();
+    scanLineFill();
+
+    glutSwapBuffers();
+}
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    gluOrtho2D(0, 500, 0, 500);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutCreateWindow("Scan Line Fill Algorithm");
+
+    vertices = { {100, 200}, {200, 300}, {300, 250}, {350, 150}, {250, 100}, {150, 150} };
+
+    glutDisplayFunc(display);
+    init();
+    glutMainLoop();
+
+    return 0;
+}
